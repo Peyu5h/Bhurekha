@@ -34,3 +34,25 @@ export const validationErr = (
   error:
     error instanceof ZodError ? transformZodError(error).errors : error.errors,
 });
+
+export const notFound = (
+  message: string = "Resource not found",
+): ApiResponse<never> => ({
+  success: false,
+  error: [{ message, code: "NOT_FOUND" }],
+});
+
+export const badRequest = (
+  message: string,
+  path?: string[],
+): ApiResponse<never> => ({
+  success: false,
+  error: [{ message, code: "BAD_REQUEST", path }],
+});
+
+export const serverError = (
+  message: string = "Internal server error",
+): ApiResponse<never> => ({
+  success: false,
+  error: [{ message, code: "SERVER_ERROR" }],
+});

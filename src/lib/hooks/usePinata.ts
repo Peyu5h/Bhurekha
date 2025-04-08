@@ -1,5 +1,4 @@
-
- "use client";
+"use client";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -47,7 +46,7 @@ export const uploadToPinata = async (file: File): Promise<string | null> => {
     toast.success(`Successfully uploaded to IPFS`);
     return gatewayUrl;
   } catch (error) {
-    console.error("Error uploading to IPFS:", error);
+    console.log("Error uploading to IPFS:", error);
     toast.error("Failed to upload to IPFS");
     return null;
   }

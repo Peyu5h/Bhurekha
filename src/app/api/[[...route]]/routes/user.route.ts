@@ -7,6 +7,6 @@ import {
 const userRoutes = new Hono();
 
 userRoutes.post("/", createOrUpdateUser);
-userRoutes.get("/wallet/:address", getUserByWallet);
+userRoutes.get("/", getUserByWallet);
 
 export default userRoutes;

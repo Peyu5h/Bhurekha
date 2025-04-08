@@ -1,3 +1,5 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -9,16 +11,22 @@ datasource db {
 }
 
 enum UserRole {
+  USER
+  SUB_REGISTRAR
   CUSTOMER
-  RETAILER
-  LOGISTIC
 }
 
 model User {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   walletAddress String   @unique
-  role          UserRole @default(CUSTOMER)
+  role          UserRole @default(USER)
+  dob           String?
+  gender        String?
+  address       String?
+  mobileNumber  String?
+  departmentId  String?
+  designation   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

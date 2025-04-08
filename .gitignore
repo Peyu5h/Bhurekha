@@ -58,3 +58,5 @@ node_modules
 /coverage.json
 
 ignition/deployments/chain-31337
+
+project-specs.md

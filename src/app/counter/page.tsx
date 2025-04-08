@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus, Minus, RotateCcw } from "lucide-react";
 import {
@@ -24,6 +24,7 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { counterAbi, getCounterAddress } from "~/lib/abi/counter";
 import { useTransaction } from "~/lib/hooks/useTransaction";
 import { toast } from "sonner";
+import api from "~/lib/api";
 
 export default function CounterPage() {
   const { address, isConnected } = useAccount();
@@ -80,7 +81,7 @@ export default function CounterPage() {
         },
       });
     } catch (err) {
-      console.error("Error incrementing counter:", err);
+      console.log("Error incrementing counter:", err);
     }
   };
 
@@ -102,7 +103,7 @@ export default function CounterPage() {
         },
       });
     } catch (err) {
-      console.error("Error decrementing counter:", err);
+      console.log("Error decrementing counter:", err);
     }
   };
 
@@ -123,7 +124,7 @@ export default function CounterPage() {
         </Link>
         <Card>
           <CardHeader>
-            <CardTitle>Counter dApp</CardTitle>
+            <CardTitle>Counter</CardTitle>
             <CardDescription>
               A simple counter on polygonAmoy testnet
             </CardDescription>

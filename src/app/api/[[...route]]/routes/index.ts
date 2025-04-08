@@ -9,6 +9,6 @@ app.get("/", (c) => {
 });
 
 // routes
-app.route("/users", userRoutes);
+app.route("/user", userRoutes);
 
 export default app;
