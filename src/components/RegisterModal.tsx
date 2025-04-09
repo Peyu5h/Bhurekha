@@ -161,6 +161,21 @@ const RegisterModal = ({
     setUserDate(new Date("2004-12-08"));
   };
 
+  const linkAadharRegistrar = () => {
+    subRegistrarFormik.setValues({
+      name: "Registrar",
+      dob: "2004-12-08",
+      gender: "Male",
+      address:
+        "420 z-wing, Happy Homes Society, J.M. road, Bhandup west, Mumbai 078",
+      mobileNumber: "8928937191",
+      departmentId: "123456",
+      designation: "Sub-Registrar",
+    });
+
+    setUserDate(new Date("2004-12-08"));
+  };
+
   useEffect(() => {
     if (userFormik.values.dob) {
       setUserDate(new Date(userFormik.values.dob));
@@ -443,14 +458,15 @@ const RegisterModal = ({
                   <Select
                     name="gender"
                     onValueChange={(value) =>
-                      userFormik.setFieldValue("gender", value)
+                      subRegistrarFormik.setFieldValue("gender", value)
                     }
-                    value={userFormik.values.gender}
+                    value={subRegistrarFormik.values.gender}
                   >
                     <SelectTrigger
                       className={cn(
                         "w-full",
-                        userFormik.touched.gender && userFormik.errors.gender
+                        subRegistrarFormik.touched.gender &&
+                          subRegistrarFormik.errors.gender
                           ? "border-destructive focus-visible:ring-destructive"
                           : "",
                       )}
@@ -548,6 +564,17 @@ const RegisterModal = ({
                     )}
                 </div>
               </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-4 w-full py-4"
+                onClick={linkAadharRegistrar}
+              >
+                <Link2Icon className="mr-2 h-4 w-4" />
+                Link my Aadhar
+              </Button>
 
               <div className="flex gap-3">
                 <Button

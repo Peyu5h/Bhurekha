@@ -1,8 +1,11 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useAccount, useChainId, useDisconnect } from "wagmi";
 import { toast } from "sonner";
 import { polygonAmoy } from "viem/chains";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import api from "../api";
 
 export type UserRole = "USER" | "SUB_REGISTRAR";
@@ -32,6 +35,7 @@ export const useWalletAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
   const chainId = useChainId();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const {
     data: user,
@@ -45,7 +49,6 @@ export const useWalletAuth = () => {
         const response = await api.get<User>(
           `/api/user?walletAddress=${address}`,
         );
-        console.log(response.data);
         return response.data || null;
       } catch (error) {
         console.log("Error fetching user:", error);
@@ -76,6 +79,19 @@ export const useWalletAuth = () => {
     }
   }, [address, queryClient]);
 
+  useEffect(() => {
+    if (user) {
+      // Set cookies for authentication
+      document.cookie = `token=${user.id}; path=/`;
+      document.cookie = `userRole=${user.role}; path=/`;
+    } else if (!isLoading && !isUserLoading) {
+      // Clear cookies on logout or wallet change
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie =
+        "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+  }, [user, isLoading, isUserLoading]);
+
   const registerUser = async (values: Omit<User, "id" | "walletAddress">) => {
     if (!address) throw new Error("Wallet not connected");
 
@@ -99,6 +115,17 @@ export const useWalletAuth = () => {
     }
   };
 
+  const logout = async () => {
+    try {
+      await disconnect();
+      toast.success("Logged out successfully");
+      router.push("/");
+    } catch (error) {
+      console.log("Logout error:", error);
+      toast.error("Failed to log out");
+    }
+  };
+
   return {
     user,
     isLoading,
@@ -106,5 +133,6 @@ export const useWalletAuth = () => {
     currentWallet: address,
     registerUser,
     userError,
+    logout,
   };
 };
