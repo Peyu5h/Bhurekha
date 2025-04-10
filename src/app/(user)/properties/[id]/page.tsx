@@ -313,87 +313,56 @@ export default function PropertyDetails({
     const isImage = document.type === "image";
 
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <div
-            className="group cursor-pointer overflow-hidden rounded-lg border transition-all hover:shadow-md"
-            onClick={() => setSelectedDocument(document)}
-          >
-            {viewMode === "grid" ? (
-              <div className="flex aspect-square flex-col">
-                <div className="bg-muted/30 flex flex-1 items-center justify-center p-4">
-                  {isImage ? (
-                    <ImageIcon className="text-muted-foreground/50 h-10 w-10" />
-                  ) : (
-                    <FileType className="text-muted-foreground/50 h-10 w-10" />
-                  )}
-                </div>
-                <div className="bg-card p-3">
-                  <p className="truncate text-sm font-medium">
-                    {document.name}
-                  </p>
-                  <div className="mt-1 flex items-center justify-between">
-                    <span className="text-muted-foreground text-xs">
-                      {document.size}
-                    </span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                      <Download className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="hover:bg-muted/20 flex items-center p-3">
-                <div className="bg-muted/30 flex h-10 w-10 items-center justify-center rounded">
-                  {isImage ? (
-                    <ImageIcon className="text-muted-foreground/70 h-5 w-5" />
-                  ) : (
-                    <FileType className="text-muted-foreground/70 h-5 w-5" />
-                  )}
-                </div>
-                <div className="ml-3 flex-1 overflow-hidden">
-                  <p className="truncate font-medium">{document.name}</p>
-                  <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                    <span>{new Date(document.date).toLocaleDateString()}</span>
-                    <span>{document.size}</span>
-                  </div>
-                </div>
-                <Button variant="ghost" size="icon" className="ml-2 h-8 w-8">
-                  <Download className="h-4 w-4" />
+      <div
+        className="group cursor-pointer overflow-hidden rounded-lg border transition-all hover:shadow-md"
+        onClick={() => {
+          setSelectedDocument(document);
+          document.dialogOpen = true;
+        }}
+      >
+        {viewMode === "grid" ? (
+          <div className="flex aspect-square flex-col">
+            <div className="bg-muted/30 flex flex-1 items-center justify-center p-4">
+              {isImage ? (
+                <ImageIcon className="text-muted-foreground/50 h-10 w-10" />
+              ) : (
+                <FileType className="text-muted-foreground/50 h-10 w-10" />
+              )}
+            </div>
+            <div className="bg-card p-3">
+              <p className="truncate text-sm font-medium">{document.name}</p>
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-muted-foreground text-xs">
+                  {document.size}
+                </span>
+                <Button variant="ghost" size="icon" className="h-6 w-6">
+                  <Download className="h-3 w-3" />
                 </Button>
               </div>
-            )}
+            </div>
           </div>
-        </DialogTrigger>
-        <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-[80vw]">
-          <DialogHeader>
-            <DialogTitle>{document.name}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4">
-            {isImage ? (
-              <img
-                src={document.url}
-                alt={document.name}
-                className="w-full rounded-md object-contain"
-                style={{ maxHeight: "70vh" }}
-              />
-            ) : (
-              <div className="bg-muted/20 flex aspect-[3/4] w-full items-center justify-center rounded-md border">
-                <div className="text-center">
-                  <FileType className="text-muted-foreground/50 mx-auto h-16 w-16" />
-                  <p className="mt-2 font-medium">{document.name}</p>
-                  <p className="text-muted-foreground text-sm">
-                    {document.size}
-                  </p>
-                  <Button className="mt-4" size="sm">
-                    <Download className="mr-2 h-4 w-4" /> Download PDF
-                  </Button>
-                </div>
+        ) : (
+          <div className="hover:bg-muted/20 flex items-center p-3">
+            <div className="bg-muted/30 flex h-10 w-10 items-center justify-center rounded">
+              {isImage ? (
+                <ImageIcon className="text-muted-foreground/70 h-5 w-5" />
+              ) : (
+                <FileType className="text-muted-foreground/70 h-5 w-5" />
+              )}
+            </div>
+            <div className="ml-3 flex-1 overflow-hidden">
+              <p className="truncate font-medium">{document.name}</p>
+              <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                <span>{new Date(document.date).toLocaleDateString()}</span>
+                <span>{document.size}</span>
               </div>
-            )}
+            </div>
+            <Button variant="ghost" size="icon" className="ml-2 h-8 w-8">
+              <Download className="h-4 w-4" />
+            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        )}
+      </div>
     );
   };
 
@@ -644,6 +613,45 @@ export default function PropertyDetails({
                   </ScrollArea>
                 </CardContent>
               </Card>
+
+              {/* Separate document dialog to improve performance */}
+              {selectedDocument && (
+                <Dialog
+                  open={!!selectedDocument}
+                  onOpenChange={(open) => !open && setSelectedDocument(null)}
+                >
+                  <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-[80vw]">
+                    <DialogHeader>
+                      <DialogTitle>{selectedDocument.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4">
+                      {selectedDocument.type === "image" ? (
+                        <img
+                          src={selectedDocument.url}
+                          alt={selectedDocument.name}
+                          className="w-full rounded-md object-contain"
+                          style={{ maxHeight: "70vh" }}
+                        />
+                      ) : (
+                        <div className="bg-muted/20 flex aspect-[3/4] w-full items-center justify-center rounded-md border">
+                          <div className="text-center">
+                            <FileType className="text-muted-foreground/50 mx-auto h-16 w-16" />
+                            <p className="mt-2 font-medium">
+                              {selectedDocument.name}
+                            </p>
+                            <p className="text-muted-foreground text-sm">
+                              {selectedDocument.size}
+                            </p>
+                            <Button className="mt-4" size="sm">
+                              <Download className="mr-2 h-4 w-4" /> Download PDF
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
             </TabsContent>
 
             <TabsContent
