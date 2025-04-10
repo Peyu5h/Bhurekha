@@ -7,6 +7,7 @@ import Web3Provider from "~/lib/middleware/Web3Provider";
 import "./globals.css";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import ReactQueryProvider from "~/lib/middleware/ReactQueryProvider";
+import { Metadata } from "next";
 
 export default function RootLayout({
   children,
