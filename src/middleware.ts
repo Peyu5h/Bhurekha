@@ -22,7 +22,6 @@ export function middleware(request: NextRequest) {
     path.startsWith("/dashboard") ||
     path.startsWith("/properties") ||
     path.startsWith("/search") ||
-    path.startsWith("/documents") ||
     path.startsWith("/profile") ||
     path.startsWith("/settings")
   ) {
@@ -54,7 +53,6 @@ export const config = {
     "/auth/login",
     "/properties/:path*",
     "/search/:path*",
-    "/documents/:path*",
     "/profile/:path*",
     "/settings/:path*",
     "/authority/:path*",

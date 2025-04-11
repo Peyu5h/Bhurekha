@@ -31,14 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const isAuth = !!user;
       setIsAuthenticated(isAuth);
 
-      // Handle auth redirects
+      // Handle auth redirects with improved logic
       if (!isAuth && !pathname.startsWith("/auth")) {
+        // Only redirect to login if not already heading there
         router.push("/auth/login");
       } else if (isAuth && pathname.startsWith("/auth")) {
+        // User is authenticated and on an auth page, redirect to dashboard
         router.push("/dashboard");
       }
+      // If user is authenticated and on a valid non-auth page, allow them to stay there
     }
-  }, [user, isLoading, pathname]);
+  }, [user, isLoading]);
+  // Removed pathname from dependencies to prevent loops when navigation happens
 
   return (
     <AuthContext.Provider

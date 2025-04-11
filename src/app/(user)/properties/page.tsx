@@ -32,11 +32,27 @@ const properties = [
     title: "Luxury Apartment in Shastri Nagar",
     address: "123, Shastri Nagar, Mumbai, Maharashtra 400001",
     type: "Residential",
+    subType: "flat",
     status: "ACTIVE",
-    area: "1200 sq.ft",
+    area: "1200",
+    unitOfMeasurement: "sqft",
     price: "₹1,25,00,000",
     documents: 8,
     photos: 12,
+    district: "mumbai",
+    city: "Mumbai",
+    taluka: "",
+    verified: true,
+    legalDetails: {
+      ownershipType: "freehold",
+      naviSharat: false,
+      juniSharat: false,
+    },
+    buildingDetails: {
+      floors: "5",
+      condition: "ready_to_move",
+      reraRegistered: true,
+    },
     lastUpdated: "2024-03-10",
     thumbnail: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
   },
@@ -45,11 +61,25 @@ const properties = [
     title: "Commercial Space in Andheri East",
     address: "456, MIDC Industrial Area, Andheri East, Mumbai 400093",
     type: "Commercial",
+    subType: "commercial",
     status: "SOLD",
-    area: "2500 sq.ft",
+    area: "2500",
+    unitOfMeasurement: "sqft",
     price: "₹2,50,00,000",
     documents: 6,
     photos: 8,
+    district: "mumbai",
+    city: "Mumbai",
+    taluka: "",
+    verified: true,
+    legalDetails: {
+      ownershipType: "leasehold",
+      naviSharat: false,
+      juniSharat: false,
+    },
+    landDetails: {
+      naClass: "na_approved",
+    },
     lastUpdated: "2024-02-15",
     thumbnail: "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
   },
@@ -58,11 +88,21 @@ const properties = [
     title: "Villa in Powai",
     address: "789, Hiranandani Gardens, Powai, Mumbai 400076",
     type: "Residential",
+    subType: "house",
     status: "ACTIVE",
-    area: "3000 sq.ft",
+    area: "3000",
+    unitOfMeasurement: "sqft",
     price: "₹3,75,00,000",
     documents: 10,
     photos: 15,
+    district: "mumbai",
+    city: "Mumbai",
+    taluka: "",
+    verified: true,
+    buildingDetails: {
+      condition: "ready_to_move",
+      reraRegistered: false,
+    },
     lastUpdated: "2024-03-05",
     thumbnail: "https://images.unsplash.com/photo-1549517045-bc93de075e53",
   },
@@ -101,19 +141,42 @@ const PropertyCard = ({ property }: { property: (typeof properties)[0] }) => {
             </div>
             <div className="space-y-1">
               <p className="text-muted-foreground text-xs">Area</p>
-              <p className="font-medium">{property.area}</p>
+              <p className="font-medium">
+                {property.area} {property.unitOfMeasurement}
+              </p>
             </div>
             <div className="space-y-1">
               <p className="text-muted-foreground text-xs">Price</p>
               <p className="font-medium">{property.price}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-muted-foreground text-xs">Updated</p>
+              <p className="text-muted-foreground text-xs">Location</p>
               <p className="font-medium">
-                {new Date(property.lastUpdated).toLocaleDateString()}
+                {property.city}, {property.district}
               </p>
             </div>
           </div>
+
+          {(property.buildingDetails?.condition || property.verified) && (
+            <div className="mt-3 flex items-center justify-between">
+              {property.buildingDetails?.condition && (
+                <span className="text-muted-foreground text-xs">
+                  {property.buildingDetails.condition
+                    .split("_")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ")}
+                </span>
+              )}
+              {property.verified && (
+                <Badge
+                  variant="outline"
+                  className="border-green-600/20 bg-green-600/10 text-xs text-green-600"
+                >
+                  Verified
+                </Badge>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>

@@ -91,12 +91,41 @@ const propertyDetails = {
   title: "Luxury Apartment in Shastri Nagar",
   address: "123, Shastri Nagar, Mumbai, Maharashtra 400001",
   type: "Residential",
+  subType: "flat",
   status: "ACTIVE",
-  area: "1200 sq.ft",
+  area: "1200",
+  unitOfMeasurement: "sqft",
   price: "₹1,25,00,000",
+  acquisition: "private",
+  yearBuilt: "2018",
+  description:
+    "Modern apartment with premium amenities and excellent location in the heart of Mumbai.",
   coordinates: {
     latitude: 19.075983,
     longitude: 72.877655,
+  },
+  legalDetails: {
+    ownershipType: "freehold",
+    titleDeedNumber: "DEED-2018-54321",
+    surveyNumber: "S-123-456",
+    propertyTaxPaid: true,
+    taxPaidUntil: "2024-12-31",
+    encumbrances: false,
+    constructionApproved: true,
+    naviSharat: false,
+    juniSharat: false,
+  },
+  buildingDetails: {
+    floors: "5",
+    units: "40",
+    amenities: ["Gym", "Swimming Pool", "24x7 Security"],
+    parking: "2",
+    furnished: "semi",
+    condition: "ready_to_move",
+    ageOfBuilding: "6",
+    reraRegistered: true,
+    reraNumber: "RERA-MH-12345",
+    occupancyCertificate: true,
   },
   documents: [
     {
@@ -385,8 +414,8 @@ export default function PropertyDetails({
       </div>
 
       <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-xl md:col-span-1 md:h-[calc(100vh-14%)]">
-          <div className="flex h-full flex-col gap-4">
+        <div className="rounded-xl md:col-span-1 md:h-[calc(100vh-12%)]">
+          <div className="flex h-full flex-col gap-6">
             <div className="relative min-h-80 w-full overflow-hidden rounded-xl">
               <img
                 src={propertyDetails.photos[currentPhotoIndex].url}
@@ -432,10 +461,16 @@ export default function PropertyDetails({
                 </CardTitle>
                 <CardDescription className="flex items-center gap-1 text-xs">
                   <MapPin className="h-4 w-4" />
-                  <span className="truncate">{propertyDetails.address}</span>
+                  <span className="">{propertyDetails.address}</span>
                 </CardDescription>
               </CardHeader>
               <CardContent className="mt-0 space-y-2 pt-0 text-sm">
+                {propertyDetails.description && (
+                  <p className="text-muted-foreground text-xs">
+                    {propertyDetails.description}
+                  </p>
+                )}
+
                 <div className="grid grid-cols-2 gap-x-4 gap-y-4">
                   <div>
                     <p className="text-muted-foreground">Type</p>
@@ -443,9 +478,133 @@ export default function PropertyDetails({
                   </div>
                   <div>
                     <p className="text-muted-foreground">Area</p>
-                    <p className="font-medium">{propertyDetails.area}</p>
+                    <p className="font-medium">
+                      {propertyDetails.area} {propertyDetails.unitOfMeasurement}
+                    </p>
                   </div>
+
+                  {propertyDetails.subType && (
+                    <div>
+                      <p className="text-muted-foreground">Sub Type</p>
+                      <p className="font-medium">
+                        {propertyDetails.subType.charAt(0).toUpperCase() +
+                          propertyDetails.subType.slice(1)}
+                      </p>
+                    </div>
+                  )}
+
+                  {propertyDetails.yearBuilt && (
+                    <div>
+                      <p className="text-muted-foreground">Year Built</p>
+                      <p className="font-medium">{propertyDetails.yearBuilt}</p>
+                    </div>
+                  )}
+
+                  {propertyDetails.legalDetails?.ownershipType && (
+                    <div>
+                      <p className="text-muted-foreground">Ownership</p>
+                      <p className="font-medium">
+                        {propertyDetails.legalDetails.ownershipType
+                          .charAt(0)
+                          .toUpperCase() +
+                          propertyDetails.legalDetails.ownershipType.slice(1)}
+                      </p>
+                    </div>
+                  )}
+
+                  {propertyDetails.buildingDetails && (
+                    <div>
+                      <p className="text-muted-foreground">Condition</p>
+                      <p className="font-medium">
+                        {propertyDetails.buildingDetails.condition
+                          ?.split("_")
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1),
+                          )
+                          .join(" ")}
+                      </p>
+                    </div>
+                  )}
                 </div>
+
+                {propertyDetails.buildingDetails && (
+                  <div className="mt-3 border-t pt-3">
+                    <p className="text-muted-foreground mb-2 font-medium">
+                      Building Details
+                    </p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                      {propertyDetails.buildingDetails.floors && (
+                        <div>
+                          <p className="text-muted-foreground text-xs">Floor</p>
+                          <p className="text-sm">
+                            {propertyDetails.buildingDetails.floors}
+                          </p>
+                        </div>
+                      )}
+
+                      {propertyDetails.buildingDetails.units && (
+                        <div>
+                          <p className="text-muted-foreground text-xs">
+                            Total Units
+                          </p>
+                          <p className="text-sm">
+                            {propertyDetails.buildingDetails.units}
+                          </p>
+                        </div>
+                      )}
+
+                      {propertyDetails.buildingDetails.parking && (
+                        <div>
+                          <p className="text-muted-foreground text-xs">
+                            Parking
+                          </p>
+                          <p className="text-sm">
+                            {propertyDetails.buildingDetails.parking} spots
+                          </p>
+                        </div>
+                      )}
+
+                      {propertyDetails.buildingDetails.furnished && (
+                        <div>
+                          <p className="text-muted-foreground text-xs">
+                            Furnished
+                          </p>
+                          <p className="text-sm">
+                            {propertyDetails.buildingDetails.furnished
+                              .charAt(0)
+                              .toUpperCase() +
+                              propertyDetails.buildingDetails.furnished.slice(
+                                1,
+                              )}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {propertyDetails.buildingDetails.amenities &&
+                      propertyDetails.buildingDetails.amenities.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-muted-foreground text-xs">
+                            Amenities
+                          </p>
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {propertyDetails.buildingDetails.amenities.map(
+                              (amenity, index) => (
+                                <Badge
+                                  key={index}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
+                                  {amenity}
+                                </Badge>
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <p className="text-muted-foreground mb-2">Location</p>

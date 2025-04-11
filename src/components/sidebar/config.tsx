@@ -75,13 +75,6 @@ export const NavItems = (role?: UserRole) => {
       position: "top",
     },
     {
-      name: "Document Vault",
-      href: "/documents",
-      icon: <MdOutlineFolder size={20} />,
-      active: isNavItemActive("/documents"),
-      position: "top",
-    },
-    {
       name: "Appointments",
       href: "/appointments",
       icon: <MdOutlineEvent size={20} />,
