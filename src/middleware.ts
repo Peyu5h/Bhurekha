@@ -3,7 +3,8 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const isPublicPath = path === "/" || path === "/login";
+  const isPublicPath =
+    path === "/" || path === "/login" || path === "/auth/login";
   const token = request.cookies.get("token")?.value || "";
   const userRole = request.cookies.get("userRole")?.value || "";
 
@@ -26,7 +27,7 @@ export function middleware(request: NextRequest) {
     path.startsWith("/settings")
   ) {
     if (!token) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/auth/login", request.url));
     }
     if (userRole !== "USER") {
       return NextResponse.redirect(new URL("/authority", request.url));
@@ -36,7 +37,7 @@ export function middleware(request: NextRequest) {
   // Protect authority routes
   if (path.startsWith("/authority")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/auth/login", request.url));
     }
     if (userRole !== "SUB_REGISTRAR") {
       return NextResponse.redirect(new URL("/properties", request.url));
@@ -50,6 +51,7 @@ export const config = {
   matcher: [
     "/",
     "/login",
+    "/auth/login",
     "/properties/:path*",
     "/search/:path*",
     "/documents/:path*",

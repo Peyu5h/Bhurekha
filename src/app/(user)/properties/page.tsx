@@ -174,10 +174,12 @@ export default function Properties() {
     <div className="p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Properties</h1>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Property
-        </Button>
+        <Link href="/properties/add">
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Property
+          </Button>
+        </Link>
       </div>
 
       <Tabs defaultValue="active" className="mt-4">

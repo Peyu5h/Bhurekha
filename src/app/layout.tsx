@@ -1,46 +1,31 @@
-"use client";
-
-import React from "react";
-import { Toaster } from "sonner";
-import AuthWrapper from "~/components/auth/AuthWrapper";
-import Web3Provider from "~/lib/middleware/Web3Provider";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "~/components/providers/theme-provider";
+import { Toaster } from "sonner";
+import Web3Provider from "~/lib/middleware/Web3Provider";
 import ReactQueryProvider from "~/lib/middleware/ReactQueryProvider";
 import { Metadata } from "next";
+import ClientLayout from "~/components/layouts/ClientLayout";
+import { ThemeProvider } from "next-themes";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Bhurekha",
+  description: "AI-Powered Blockchain Land Registry",
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className="bg-background min-h-screen font-sans antialiased"
-        suppressHydrationWarning
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+      <body className={` ${inter.className}`} suppressHydrationWarning>
+        <ThemeProvider attribute={"class"} defaultTheme="dark" enableSystem>
           <ReactQueryProvider>
             <Web3Provider cookies={null}>
-              {mounted ? (
-                <AuthWrapper>{children}</AuthWrapper>
-              ) : (
-                <div className="flex min-h-screen items-center justify-center">
-                  <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-                </div>
-              )}
+              <ClientLayout>{children}</ClientLayout>
               <Toaster />
             </Web3Provider>
           </ReactQueryProvider>
