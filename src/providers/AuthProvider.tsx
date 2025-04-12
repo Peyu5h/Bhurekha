@@ -9,6 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   user: any;
   logout: () => Promise<void>;
+  needsRegistration: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,33 +17,86 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   user: null,
   logout: async () => {},
+  needsRegistration: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user, isLoading, logout } = useWalletAuth();
+  const { user, isLoading, logout, currentWallet, isCorrectChain } =
+    useWalletAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [needsRegistration, setNeedsRegistration] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const [redirectInProgress, setRedirectInProgress] = useState(false);
+  const [lastRedirectPath, setLastRedirectPath] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isLoading) {
-      const isAuth = !!user;
-      setIsAuthenticated(isAuth);
+    if (!isLoading && currentWallet && !user && isCorrectChain) {
+      setNeedsRegistration(true);
+      setIsAuthenticated(false);
 
-      // Handle auth redirects with improved logic
-      if (!isAuth && !pathname.startsWith("/auth")) {
-        // Only redirect to login if not already heading there
-        router.push("/auth/login");
-      } else if (isAuth && pathname.startsWith("/auth")) {
-        // User is authenticated and on an auth page, redirect to dashboard
-        router.push("/dashboard");
+      if (!pathname.startsWith("/auth") && pathname !== "/") {
+        if (lastRedirectPath !== "/auth/login") {
+          setLastRedirectPath("/auth/login");
+          router.push("/auth/login");
+        }
       }
-      // If user is authenticated and on a valid non-auth page, allow them to stay there
+    } else {
+      setNeedsRegistration(false);
+      setIsAuthenticated(!!user);
     }
-  }, [user, isLoading]);
-  // Removed pathname from dependencies to prevent loops when navigation happens
+  }, [
+    user,
+    isLoading,
+    currentWallet,
+    isCorrectChain,
+    pathname,
+    router,
+    lastRedirectPath,
+  ]);
+
+  useEffect(() => {
+    if (isAuthenticated && user && !isLoading && !redirectInProgress) {
+      if (pathname.startsWith("/auth")) {
+        const targetPath =
+          user.role === "SUB_REGISTRAR" ? "/authority" : "/dashboard";
+        if (lastRedirectPath !== targetPath) {
+          setRedirectInProgress(true);
+          setLastRedirectPath(targetPath);
+          router.push(targetPath);
+        }
+      } else if (
+        user.role === "SUB_REGISTRAR" &&
+        !pathname.startsWith("/authority")
+      ) {
+        if (lastRedirectPath !== "/authority") {
+          setRedirectInProgress(true);
+          setLastRedirectPath("/authority");
+          router.push("/authority");
+        }
+      } else if (user.role === "USER" && pathname.startsWith("/authority")) {
+        if (lastRedirectPath !== "/dashboard") {
+          setRedirectInProgress(true);
+          setLastRedirectPath("/dashboard");
+          router.push("/dashboard");
+        }
+      }
+    }
+  }, [
+    user,
+    isAuthenticated,
+    isLoading,
+    pathname,
+    router,
+    redirectInProgress,
+    lastRedirectPath,
+  ]);
+
+  useEffect(() => {
+    setRedirectInProgress(false);
+  }, [pathname]);
 
   return (
     <AuthContext.Provider
@@ -51,6 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         user,
         logout,
+        needsRegistration,
       }}
     >
       {children}

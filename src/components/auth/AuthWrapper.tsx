@@ -19,32 +19,15 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     null,
   );
 
+  const [hasRedirected, setHasRedirected] = React.useState(false);
+
   React.useEffect(() => {
     if (address && address !== previousAddress) {
       setPreviousAddress(address);
       setIsRegistering(false);
+      setHasRedirected(false);
     }
   }, [address, previousAddress]);
-
-  React.useEffect(() => {
-    if (!isLoading && user) {
-      if (user.role === "SUB_REGISTRAR") {
-        if (!pathname.startsWith("/authority")) {
-          router.push("/authority");
-          return;
-        }
-      } else if (user.role === "USER") {
-        if (pathname === "/") {
-          router.push("/dashboard");
-          return;
-        }
-        if (pathname.startsWith("/authority")) {
-          router.push("/dashboard");
-          return;
-        }
-      }
-    }
-  }, [user, isLoading, router, pathname]);
 
   React.useEffect(() => {
     if (
@@ -55,17 +38,53 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
       !isRegistering
     ) {
       setShowRegisterModal(true);
-    } else {
+
+      if (!pathname.startsWith("/auth") && !hasRedirected) {
+        setHasRedirected(true);
+        router.push("/auth/login");
+      }
+    } else if (user && !isLoading) {
       setShowRegisterModal(false);
+
+      if (!hasRedirected) {
+        setHasRedirected(true);
+
+        if (
+          user.role === "SUB_REGISTRAR" &&
+          !pathname.startsWith("/authority")
+        ) {
+          router.push("/authority");
+        } else if (user.role === "USER" && pathname.startsWith("/authority")) {
+          router.push("/dashboard");
+        } else if (pathname.startsWith("/auth")) {
+          router.push(
+            user.role === "SUB_REGISTRAR" ? "/authority" : "/dashboard",
+          );
+        }
+      }
     }
-  }, [isConnected, address, user, isLoading, isRegistering]);
+  }, [
+    isConnected,
+    address,
+    user,
+    isLoading,
+    isRegistering,
+    pathname,
+    router,
+    hasRedirected,
+  ]);
+
+  React.useEffect(() => {
+    setHasRedirected(false);
+  }, [pathname]);
 
   const handleRegister = async (values: any) => {
     try {
       setIsRegistering(true);
       await registerUser(values);
+      setShowRegisterModal(false);
+      setHasRedirected(false);
     } catch (error) {
-      console.log("Registration error:", error);
       setIsRegistering(false);
     }
   };
@@ -96,12 +115,17 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
         <div className="container mx-auto flex min-h-screen flex-col items-center justify-center px-4">
           <h1 className="mb-8 text-4xl font-bold">Welcome to Bhurekha</h1>
           <p className="text-muted-foreground mb-8 text-center text-lg">
-            Please complete registration to continue
+            Loading user information...
           </p>
         </div>
         <RegisterModal
           isOpen={showRegisterModal}
-          onClose={() => setShowRegisterModal(false)}
+          onClose={() => {
+            if (pathname.startsWith("/auth")) {
+              setShowRegisterModal(false);
+              router.push("/");
+            }
+          }}
           onRegister={handleRegister}
         />
       </>

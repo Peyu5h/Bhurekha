@@ -175,7 +175,7 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold">Dashboard</h1>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Link href="/properties">
           <Card className="hover:border-primary/30 cursor-pointer gap-0 p-0 transition-all hover:shadow-md">
             <CardHeader className="mb-0 border-b p-0 pb-0 [.border-b]:pb-0">
@@ -227,10 +227,13 @@ export default function Dashboard() {
           <Card className="hover:border-primary/30 cursor-pointer gap-0 p-0 transition-all hover:shadow-md">
             <CardHeader className="mb-0 border-b p-0 pb-0 [.border-b]:pb-0">
               <div className="flex items-center justify-between px-4 py-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="hidden text-sm font-medium md:flex">
                   Upcoming Appointment
                 </CardTitle>
-                <Calendar className="text-muted-foreground h-4 w-4" />
+                <CardTitle className="text-sm font-medium md:hidden">
+                  Appointment
+                </CardTitle>
+                <Calendar className="text-muted-foreground hidden h-4 w-4 sm:flex" />
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -238,17 +241,22 @@ export default function Dashboard() {
                 upcomingAppointments.map((appointment) => (
                   <div key={appointment.id} className="p-4">
                     <div className="mb-2 flex items-center justify-between">
-                      <h3 className="text-sm font-medium">
-                        {new Date(appointment.date).toLocaleDateString()} -{" "}
+                      <h3 className="flex-row text-[10px] font-medium sm:flex-col sm:text-xs">
+                        {new Date(appointment.date).toLocaleDateString()}{" "}
+                        <span className="hidden sm:inline">-</span>{" "}
                         {appointment.time}
                       </h3>
-                      <Badge variant="outline" className="bg-primary/10">
-                        In {appointment.daysLeft} days
+                      <Badge
+                        variant="outline"
+                        className="bg-primary/10 text-[10px]"
+                      >
+                        <span className="hidden sm:inline">In</span>{" "}
+                        {appointment.daysLeft} days
                       </Badge>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="mt-[10px] flex items-center gap-1 text-xs">
+                      <div className="mt-[10px] flex items-center gap-1 text-[8px] sm:text-xs">
                         <MapPin className="text-muted-foreground h-4 w-4" />
                         <span className="truncate">{appointment.location}</span>
                       </div>
@@ -271,7 +279,7 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="scrollbar flex h-auto flex-col gap-0 overflow-auto p-0 md:col-span-2 md:h-[calc(100vh-36%)]">
           <CardHeader className="mb-0 border-b p-0 pb-0 [.border-b]:pb-0">
             <div className="flex items-center justify-between px-4 py-2">

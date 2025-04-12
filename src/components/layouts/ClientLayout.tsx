@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AuthProvider } from "~/providers/AuthProvider";
+import AuthWrapper from "~/components/auth/AuthWrapper";
 import { usePathname } from "next/navigation";
 
 interface ClientLayoutProps {
@@ -11,7 +12,6 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const isAuthPage = pathname.startsWith("/auth");
 
   useEffect(() => {
     setMounted(true);
@@ -25,10 +25,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     );
   }
 
-  // For auth pages, don't wrap in AuthProvider to prevent redirect loops
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-
-  return <AuthProvider>{children}</AuthProvider>;
+  // Use AuthProvider + AuthWrapper for all pages
+  return (
+    <AuthProvider>
+      <AuthWrapper>{children}</AuthWrapper>
+    </AuthProvider>
+  );
 }

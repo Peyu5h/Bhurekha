@@ -46,18 +46,24 @@ export const useWalletAuth = () => {
     queryFn: async () => {
       if (!address) return null;
       try {
+        // Added 404 handling and error formatting
         const response = await api.get<User>(
           `/api/user?walletAddress=${address}`,
         );
+        console.log("User found:", response.data);
         return response.data || null;
-      } catch (error) {
-        console.log("Error fetching user:", error);
+      } catch (error: any) {
+        // Not logging 404s as errors since they're expected for new users
+        if (error.response && error.response.status === 404) {
+          console.log("User not found for wallet:", address);
+          return null;
+        }
         return null;
       }
     },
-    enabled: !!address,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 1,
+    enabled: !!address && isConnected,
+    staleTime: 1 * 60 * 1000, // 1 minute - reduced for testing
+    retry: false, // No retries to avoid unnecessary API calls
   });
 
   useEffect(() => {
@@ -69,9 +75,8 @@ export const useWalletAuth = () => {
   useEffect(() => {
     if (isConnected && chainId !== polygonAmoy.id) {
       toast.error("Please switch to Polygon Amoy testnet");
-      disconnect();
     }
-  }, [isConnected, chainId, disconnect]);
+  }, [isConnected, chainId]);
 
   useEffect(() => {
     if (address) {
@@ -82,15 +87,15 @@ export const useWalletAuth = () => {
   useEffect(() => {
     if (user) {
       // Set cookies for authentication
-      document.cookie = `token=${user.id}; path=/`;
-      document.cookie = `userRole=${user.role}; path=/`;
-    } else if (!isLoading && !isUserLoading) {
-      // Clear cookies on logout or wallet change
+      document.cookie = `token=${user.id}; path=/; SameSite=Strict`;
+      document.cookie = `userRole=${user.role}; path=/; SameSite=Strict`;
+    } else if (!isLoading && !isUserLoading && address) {
+      // Only clear cookies when wallet is connected but no user found
       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       document.cookie =
         "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
-  }, [user, isLoading, isUserLoading]);
+  }, [user, isLoading, isUserLoading, address]);
 
   const registerUser = async (values: Omit<User, "id" | "walletAddress">) => {
     if (!address) throw new Error("Wallet not connected");
@@ -117,7 +122,14 @@ export const useWalletAuth = () => {
 
   const logout = async () => {
     try {
+      // Clear cookies before disconnecting
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie =
+        "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
       await disconnect();
+      await queryClient.invalidateQueries();
+
       toast.success("Logged out successfully");
       router.push("/");
     } catch (error) {
@@ -134,5 +146,6 @@ export const useWalletAuth = () => {
     registerUser,
     userError,
     logout,
+    isCorrectChain: chainId === polygonAmoy.id,
   };
 };

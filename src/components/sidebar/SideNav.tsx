@@ -77,7 +77,7 @@ export default function SideNav({ role = "USER", children }: SideNavProps) {
             </Link>
           </div>
 
-          <nav className="flex flex-col gap-1 px-2">
+          <nav className="mx-auto flex flex-col gap-1 px-2 md:mx-0">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href || pathname.startsWith(item.href);

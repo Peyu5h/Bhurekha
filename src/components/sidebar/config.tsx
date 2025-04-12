@@ -1,6 +1,5 @@
 import { usePathname } from "next/navigation";
 
-import { Settings } from "lucide-react";
 import {
   MdSpaceDashboard,
   MdOutlineHome,
@@ -42,13 +41,6 @@ export const NavItems = (role?: UserRole) => {
         active: isNavItemActive("/authority/appointments"),
         position: "top",
       },
-      {
-        name: "Settings",
-        href: "/authority/settings",
-        icon: <Settings size={18} />,
-        active: isNavItemActive("/authority/settings"),
-        position: "bottom",
-      },
     ];
   }
 
@@ -80,13 +72,6 @@ export const NavItems = (role?: UserRole) => {
       icon: <MdOutlineEvent size={20} />,
       active: isNavItemActive("/appointments"),
       position: "top",
-    },
-    {
-      name: "Settings",
-      href: "/settings",
-      icon: <Settings size={18} />,
-      active: isNavItemActive("/settings"),
-      position: "bottom",
     },
   ];
 };

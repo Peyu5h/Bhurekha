@@ -199,8 +199,8 @@ const PropertyCard = ({
   property: (typeof MOCK_PROPERTIES)[0];
 }) => {
   return (
-    <Link href={`/properties/${property.id}`}>
-      <Card className="hover:border-primary/30 relative overflow-hidden p-0 transition-all hover:shadow-md">
+    <Link href={`/search/${property.id}`}>
+      <Card className="hover:border-primary/30 relative gap-4 overflow-hidden p-0 transition-all hover:shadow-md">
         {property.verified && (
           <Badge
             variant="outline"
@@ -217,11 +217,13 @@ const PropertyCard = ({
           />
         </div>
         <CardHeader className="pb-2">
-          <CardTitle className="text-md">{property.title}</CardTitle>
+          <CardTitle className="text-md h-5 overflow-hidden bg-white">
+            {trim(property.title, 32)}
+          </CardTitle>
 
-          <CardDescription className="flex items-center gap-1">
+          <CardDescription className="flex items-center gap-1 text-xs">
             <MapPin className="h-3.5 w-3.5" />
-            {trim(property.address, 24)}
+            {trim(property.address, 32)}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 pb-6">
@@ -242,9 +244,7 @@ const PropertyCard = ({
             </div>
             <div className="space-y-1">
               <p className="text-muted-foreground text-xs">Location</p>
-              <p className="font-medium">
-                {property.city}, {property.district}
-              </p>
+              <p className="font-medium">{property.city}</p>
             </div>
           </div>
         </CardContent>
@@ -598,7 +598,7 @@ export default function SearchProperties() {
         </div>
 
         {/* Results */}
-        <ScrollArea className="mb-6 h-full md:h-auto">
+        <ScrollArea className="scrollbar mb-6 h-full md:h-auto">
           <div className="space-y-6">
             {isLoading ? (
               <div className="mt-40 flex items-center justify-center">
@@ -620,7 +620,7 @@ export default function SearchProperties() {
                 </Button>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredProperties.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
