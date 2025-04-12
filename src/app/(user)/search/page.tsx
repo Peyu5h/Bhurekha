@@ -64,7 +64,8 @@ const MOCK_PROPERTIES = [
     village: "Hinjewadi",
     address: "Survey No. 123, Hinjewadi Phase 3, Pune",
     verified: true,
-    thumbnail: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+    thumbnail:
+      "https://images.unsplash.com/photo-1719400525704-dca5a44747c3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     legalDetails: {
       naviSharat: true,
       juniSharat: false,
@@ -89,7 +90,8 @@ const MOCK_PROPERTIES = [
     city: "Pune",
     address: "Blue Ridge Society, Koregaon Park, Pune",
     verified: true,
-    thumbnail: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+    thumbnail:
+      "https://images.unsplash.com/photo-1744311971549-9c529b60b98a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     buildingDetails: {
       floors: "4",
       condition: "ready_to_move",
@@ -113,8 +115,9 @@ const MOCK_PROPERTIES = [
     taluka: "Dindori",
     village: "Vani",
     address: "Gat No. 45, Vani, Dindori, Nashik",
-    verified: false,
-    thumbnail: "/images/farm1.jpg",
+    verified: true,
+    thumbnail:
+      "https://images.unsplash.com/photo-1622353133218-825cfebb6844?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     landDetails: {
       naClass: "agricultural",
       waterSource: "borewell",
@@ -137,7 +140,8 @@ const MOCK_PROPERTIES = [
     taluka: "Maval",
     address: "Royal Palms, Lonavala, Pune",
     verified: true,
-    thumbnail: "/images/villa1.jpg",
+    thumbnail:
+      "https://images.unsplash.com/photo-1617978241112-898785df45b9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     buildingDetails: {
       condition: "ready_to_move",
     },
@@ -160,7 +164,8 @@ const MOCK_PROPERTIES = [
     village: "Wagholi",
     address: "Plot No. 78, MIDC, Wagholi, Pune",
     verified: true,
-    thumbnail: "/images/commercial1.jpg",
+    thumbnail:
+      "https://images.unsplash.com/photo-1642065569609-c500f302610e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     landDetails: {
       naClass: "na_approved",
     },
@@ -181,7 +186,8 @@ const MOCK_PROPERTIES = [
     city: "Pune",
     address: "Nyati Empire, Viman Nagar, Pune",
     verified: true,
-    thumbnail: "/images/flat2.jpg",
+    thumbnail:
+      "https://images.unsplash.com/photo-1617228133035-2347f159e755?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     buildingDetails: {
       floors: "12",
       condition: "ready_to_move",
@@ -201,14 +207,6 @@ const PropertyCard = ({
   return (
     <Link href={`/search/${property.id}`}>
       <Card className="hover:border-primary/30 relative gap-4 overflow-hidden p-0 transition-all hover:shadow-md">
-        {property.verified && (
-          <Badge
-            variant="outline"
-            className="absolute top-4 right-4 border-green-600/60 bg-green-600/20 text-xs text-green-800"
-          >
-            Verified
-          </Badge>
-        )}
         <div className="aspect-[16/9] w-full overflow-hidden">
           <img
             src={property.thumbnail}
@@ -217,7 +215,7 @@ const PropertyCard = ({
           />
         </div>
         <CardHeader className="pb-2">
-          <CardTitle className="text-md h-5 overflow-hidden bg-white">
+          <CardTitle className="text-md h-5 overflow-hidden">
             {trim(property.title, 32)}
           </CardTitle>
 
@@ -268,7 +266,7 @@ export default function SearchProperties() {
     propertyType: "",
     minPrice: 0,
     maxPrice: 50000000,
-    verified: false,
+    verified: true,
     keyword: "",
   });
 
@@ -347,7 +345,7 @@ export default function SearchProperties() {
       propertyType: "",
       minPrice: 0,
       maxPrice: 50000000,
-      verified: false,
+      verified: true,
       keyword: "",
     });
   };

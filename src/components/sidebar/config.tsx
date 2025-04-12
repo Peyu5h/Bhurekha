@@ -21,13 +21,6 @@ export const NavItems = (role?: UserRole) => {
   if (role === "SUB_REGISTRAR") {
     return [
       {
-        name: "Dashboard",
-        href: "/authority",
-        icon: <MdSpaceDashboard size={20} />,
-        active: isNavItemActive("/authority"),
-        position: "top",
-      },
-      {
         name: "Verifications",
         href: "/authority/verifications",
         icon: <MdOutlineVerified size={20} />,

@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AuthProvider } from "~/providers/AuthProvider";
 import AuthWrapper from "~/components/auth/AuthWrapper";
 import { usePathname } from "next/navigation";
+import { AuthProvider } from "./AuthProvider";
+import { useWalletAuth } from "~/lib/hooks/useWalletAuth";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
 }
 
-export default function ClientLayout({ children }: ClientLayoutProps) {
+export default function AuthLayout({ children }: ClientLayoutProps) {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { user, isLoading } = useWalletAuth();
 
   useEffect(() => {
     setMounted(true);
@@ -25,7 +27,17 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     );
   }
 
-  // Use AuthProvider + AuthWrapper for all pages
+  // Special case for SUB_REGISTRAR users on authority pages - bypass auth checks
+  if (
+    !isLoading &&
+    user &&
+    user.role === "SUB_REGISTRAR" &&
+    pathname.startsWith("/authority") &&
+    pathname !== "/authority"
+  ) {
+    return <>{children}</>;
+  }
+
   return (
     <AuthProvider>
       <AuthWrapper>{children}</AuthWrapper>

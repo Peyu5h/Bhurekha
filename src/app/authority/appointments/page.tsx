@@ -2,7 +2,7 @@ import React from "react";
 
 export default function AuthorityAppointments() {
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto p-4">
       <h1 className="mb-6 text-3xl font-bold">Appointments</h1>
       <div className="bg-card mb-6 rounded-lg p-6 shadow-md">
         <div className="mb-4 flex justify-between">
@@ -19,7 +19,7 @@ export default function AuthorityAppointments() {
                 Confirmed
               </span>
             </div>
-            <h3 className="font-medium">John Doe</h3>
+            <h3 className="font-medium">Ramesh Kulkarni</h3>
             <p className="text-muted-foreground text-sm">
               Property Verification
             </p>
@@ -35,7 +35,7 @@ export default function AuthorityAppointments() {
                 Pending
               </span>
             </div>
-            <h3 className="font-medium">Jane Smith</h3>
+            <h3 className="font-medium">Atharva chavan</h3>
             <p className="text-muted-foreground text-sm">Document Submission</p>
             <div className="mt-2 flex gap-2">
               <button className="text-primary text-sm">Reschedule</button>
@@ -49,7 +49,7 @@ export default function AuthorityAppointments() {
                 Confirmed
               </span>
             </div>
-            <h3 className="font-medium">Mike Johnson</h3>
+            <h3 className="font-medium">Arya Jagtap</h3>
             <p className="text-muted-foreground text-sm">
               Property Registration
             </p>

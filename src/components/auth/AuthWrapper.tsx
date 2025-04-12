@@ -51,12 +51,16 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
         if (
           user.role === "SUB_REGISTRAR" &&
-          !pathname.startsWith("/authority")
+          !pathname.startsWith("/authority") &&
+          !pathname.startsWith("/auth")
         ) {
+          console.log("[AuthWrapper] Redirecting SUB_REGISTRAR to /authority");
           router.push("/authority");
         } else if (user.role === "USER" && pathname.startsWith("/authority")) {
+          console.log("[AuthWrapper] Redirecting USER away from /authority");
           router.push("/dashboard");
         } else if (pathname.startsWith("/auth")) {
+          console.log("[AuthWrapper] Redirecting from /auth to dashboard");
           router.push(
             user.role === "SUB_REGISTRAR" ? "/authority" : "/dashboard",
           );
@@ -96,7 +100,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
         <p className="text-muted-foreground mb-8 text-center text-lg">
           Connect your wallet to access the land registration system
         </p>
-        <w3m-button />
+        <w3m-button label="Login to bhurekha" />
       </div>
     );
   }

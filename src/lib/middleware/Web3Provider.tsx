@@ -38,6 +38,8 @@ function Web3Provider({
       analytics: true,
       socials: ["google"],
       walletFeaturesOrder: [],
+      collapseWallets: true,
+      connectMethodsOrder: ["social", "wallet"],
       email: false,
     },
     themeMode: "dark",

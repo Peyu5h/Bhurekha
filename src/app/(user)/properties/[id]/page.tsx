@@ -54,36 +54,7 @@ import {
 } from "lucide-react";
 import { Input } from "~/components/ui/input";
 import { Progress } from "~/components/ui/progress";
-
-// Mapbox component
-const MapBox = ({
-  latitude,
-  longitude,
-}: {
-  latitude: number;
-  longitude: number;
-}) => {
-  return (
-    <div className="relative aspect-video overflow-hidden rounded-md border">
-      <div className="bg-muted absolute inset-0">
-        <iframe
-          title="Property Location"
-          width="100%"
-          height="100%"
-          src={`https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`}
-          className="absolute inset-0"
-          frameBorder="0"
-          allowFullScreen
-        ></iframe>
-      </div>
-      <div className="absolute right-2 bottom-2">
-        <Badge className="bg-background/80 backdrop-blur-sm">
-          {latitude.toFixed(6)}, {longitude.toFixed(6)}
-        </Badge>
-      </div>
-    </div>
-  );
-};
+import { MapTemp } from "~/lib/map";
 
 // Simplified for the example
 const propertyDetails = {
@@ -177,17 +148,17 @@ const propertyDetails = {
   photos: [
     {
       id: 1,
-      url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      url: "https://images.unsplash.com/photo-1720481811085-711f224178ee?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "Front View",
     },
     {
       id: 2,
-      url: "https://images.unsplash.com/photo-1560449017-7c4e3be7a6b3",
+      url: "https://images.unsplash.com/photo-1617978241112-898785df45b9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "Living Room",
     },
     {
       id: 3,
-      url: "https://images.unsplash.com/photo-1560449017-7c4e3be7a6b4",
+      url: "https://images.unsplash.com/photo-1669103148197-539672dbdeff?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "Kitchen",
     },
   ],
@@ -206,7 +177,8 @@ const propertyDetails = {
     {
       id: 1,
       name: "Ramesh Patel",
-      avatarUrl: "https://i.pravatar.cc/150?img=1",
+      avatarUrl:
+        "https://images.unsplash.com/photo-1638368349569-e49499196d9f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGluZGlhbiUyMG1lbiUyMHByb2ZpbGUlMjBwaWN8ZW58MHx8MHx8fDA%3D",
       status: "INTERESTED",
       lastActive: "2 hours ago",
       messages: [
@@ -233,7 +205,8 @@ const propertyDetails = {
     {
       id: 2,
       name: "Suresh Kumar",
-      avatarUrl: "https://i.pravatar.cc/150?img=2",
+      avatarUrl:
+        "https://images.unsplash.com/photo-1645036915593-b4ed7e016b65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGluZGlhbiUyMG1lbiUyMHByb2ZpbGUlMjBwaWN8ZW58MHx8MHx8fDA%3D",
       status: "NEGOTIATING",
       lastActive: "1 day ago",
       messages: [
@@ -253,8 +226,9 @@ const propertyDetails = {
     },
     {
       id: 3,
-      name: "Priya Sharma",
-      avatarUrl: "https://i.pravatar.cc/150?img=3",
+      name: "Prayag Sharma",
+      avatarUrl:
+        "https://images.unsplash.com/photo-1739958742515-6fe41e461664?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDR8fGluZGlhbiUyMG1lbiUyMHByb2ZpbGUlMjBwaWN8ZW58MHx8MHx8fDA%3D",
       status: "REJECTED",
       lastActive: "3 days ago",
       messages: [],
@@ -608,7 +582,7 @@ export default function PropertyDetails({
 
                 <div className="pt-2">
                   <p className="text-muted-foreground mb-2">Location</p>
-                  <MapBox
+                  <MapTemp
                     latitude={propertyDetails.coordinates.latitude}
                     longitude={propertyDetails.coordinates.longitude}
                   />

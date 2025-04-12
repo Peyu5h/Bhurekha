@@ -81,7 +81,8 @@ const properties = [
       naClass: "na_approved",
     },
     lastUpdated: "2024-02-15",
-    thumbnail: "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
+    thumbnail:
+      "https://images.unsplash.com/photo-1622353133218-825cfebb6844?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "PRJ-2024-003",
@@ -104,14 +105,26 @@ const properties = [
       reraRegistered: false,
     },
     lastUpdated: "2024-03-05",
-    thumbnail: "https://images.unsplash.com/photo-1549517045-bc93de075e53",
+    thumbnail:
+      "https://images.unsplash.com/photo-1720481811085-711f224178ee?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];
 
 const PropertyCard = ({ property }: { property: (typeof properties)[0] }) => {
   return (
     <Link href={`/properties/${property.id}`}>
-      <Card className="hover:border-primary/30 overflow-hidden p-0 transition-all hover:shadow-md">
+      <Card className="hover:border-primary/30 relative overflow-hidden p-0 transition-all hover:shadow-md">
+        <div className="absolute top-4 right-4">
+          {property.verified && (
+            <Badge
+              variant="outline"
+              className="border-green-600/20 bg-green-600/40 text-xs text-green-900"
+            >
+              Verified
+            </Badge>
+          )}
+        </div>
+
         <div className="aspect-[16/9] w-full overflow-hidden">
           <img
             src={property.thumbnail}
@@ -156,27 +169,6 @@ const PropertyCard = ({ property }: { property: (typeof properties)[0] }) => {
               </p>
             </div>
           </div>
-
-          {(property.buildingDetails?.condition || property.verified) && (
-            <div className="mt-3 flex items-center justify-between">
-              {property.buildingDetails?.condition && (
-                <span className="text-muted-foreground text-xs">
-                  {property.buildingDetails.condition
-                    .split("_")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ")}
-                </span>
-              )}
-              {property.verified && (
-                <Badge
-                  variant="outline"
-                  className="border-green-600/20 bg-green-600/10 text-xs text-green-600"
-                >
-                  Verified
-                </Badge>
-              )}
-            </div>
-          )}
         </CardContent>
       </Card>
     </Link>

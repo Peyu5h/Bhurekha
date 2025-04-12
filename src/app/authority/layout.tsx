@@ -1,11 +1,7 @@
-import { Metadata } from "next";
+"use client";
+
 import React from "react";
 import SideNav from "~/components/sidebar/SideNav";
-
-export const metadata: Metadata = {
-  title: "Bhurekha | Authority",
-  description: "Authority Dashboard",
-};
 
 export default function AuthorityLayout({
   children,

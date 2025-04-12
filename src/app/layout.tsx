@@ -4,8 +4,8 @@ import { Toaster } from "sonner";
 import Web3Provider from "~/lib/middleware/Web3Provider";
 import ReactQueryProvider from "~/lib/middleware/ReactQueryProvider";
 import { Metadata } from "next";
-import ClientLayout from "~/components/layouts/ClientLayout";
 import { ThemeProvider } from "next-themes";
+import AuthLayout from "~/components/auth/AuthLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,7 @@ export default function RootLayout({
         <ThemeProvider attribute={"class"} defaultTheme="dark" enableSystem>
           <ReactQueryProvider>
             <Web3Provider cookies={null}>
-              <ClientLayout>{children}</ClientLayout>
+              <AuthLayout>{children}</AuthLayout>
               <Toaster />
             </Web3Provider>
           </ReactQueryProvider>

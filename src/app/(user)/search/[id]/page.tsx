@@ -42,17 +42,17 @@ const propertyDetails = {
   photos: [
     {
       id: 1,
-      url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      url: "https://images.unsplash.com/photo-1720481811085-711f224178ee?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "Front View",
     },
     {
       id: 2,
-      url: "https://images.unsplash.com/photo-1549517045-bc93de075e53",
+      url: "https://images.unsplash.com/photo-1617228133035-2347f159e755?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "Living Room",
     },
     {
       id: 3,
-      url: "https://images.unsplash.com/photo-1560449017-7c4e3be7a6b3",
+      url: "https://images.unsplash.com/photo-1669103148197-539672dbdeff?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "Kitchen",
     },
   ],

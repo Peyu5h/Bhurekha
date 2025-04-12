@@ -57,12 +57,14 @@ const propertyDeal = {
   seller: {
     name: "Ramesh Patel",
     id: "USR-2024-001",
-    avatarUrl: "https://i.pravatar.cc/150?img=11",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1645036915593-b4ed7e016b65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGluZGlhbiUyMG1lbiUyMHByb2ZpbGUlMjBwaWN8ZW58MHx8MHx8fDA%3D",
   },
   buyer: {
     name: "Suresh Kumar",
     id: "USR-2024-002",
-    avatarUrl: "https://i.pravatar.cc/150?img=12",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1739958742515-6fe41e461664?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDR8fGluZGlhbiUyMG1lbiUyMHByb2ZpbGUlMjBwaWN8ZW58MHx8MHx8fDA%3D",
   },
   timeline: registrySteps,
 };
