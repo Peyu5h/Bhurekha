@@ -186,3 +186,14 @@
   background-color: #292929;
   border-radius: 5px;
 }
+
+.gradient-button {
+  background-image: linear-gradient(to right, #213b5b, #6cf7ff);
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  transition: background-position 0.3s ease-in-out;
+}
+
+.gradient-button:hover {
+  background-position: 100% 0%;
+}

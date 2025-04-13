@@ -37,7 +37,6 @@ export default function Appointments() {
     <div className="container mx-auto p-4 md:p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Appointments</h1>
-        <Button>Schedule New Appointment</Button>
       </div>
 
       {upcomingAppointments.length > 0 ? (

@@ -502,7 +502,10 @@ export default function AddProperty() {
                       value={propertyData.subType}
                       onValueChange={(value) => handleChange("subType", value)}
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select subtype" />
                       </SelectTrigger>
                       <SelectContent>
@@ -567,7 +570,10 @@ export default function AddProperty() {
                         handleChange("acquisitionSource", value)
                       }
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select source" />
                       </SelectTrigger>
                       <SelectContent>
@@ -664,7 +670,10 @@ export default function AddProperty() {
                       handleChange("unitOfMeasurement", value)
                     }
                   >
-                    <SelectTrigger className="h-11 w-[80px] rounded-l-none border-l-0 py-4">
+                    <SelectTrigger
+                      style={{ height: "2.75rem" }}
+                      className="w-[80px] rounded-l-none border-l-0 py-4 [&]:h-11"
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -834,7 +843,10 @@ export default function AddProperty() {
                         handleNestedChange("landDetails", "naClass", value)
                       }
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -866,7 +878,10 @@ export default function AddProperty() {
                         )
                       }
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select use" />
                       </SelectTrigger>
                       <SelectContent>
@@ -902,7 +917,10 @@ export default function AddProperty() {
                         handleNestedChange("landDetails", "soilType", value)
                       }
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select soil type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -928,7 +946,10 @@ export default function AddProperty() {
                         handleNestedChange("landDetails", "waterSource", value)
                       }
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select water source" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1024,7 +1045,10 @@ export default function AddProperty() {
                         )
                       }
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select condition" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1140,7 +1164,10 @@ export default function AddProperty() {
                         handleChange("taluka", "");
                       }}
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue placeholder="Select district" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1165,7 +1192,10 @@ export default function AddProperty() {
                       onValueChange={(value) => handleChange("taluka", value)}
                       disabled={!propertyData.district}
                     >
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger
+                        style={{ height: "2.75rem" }}
+                        className="h-11"
+                      >
                         <SelectValue
                           placeholder={
                             propertyData.district
@@ -1274,10 +1304,6 @@ export default function AddProperty() {
                     initialLocation={propertyData.coordinates}
                   />
                 </div>
-                <div className="text-muted-foreground mt-2 flex justify-between text-xs">
-                  <span>Lat: {propertyData.coordinates.lat.toFixed(6)}</span>
-                  <span>Long: {propertyData.coordinates.lng.toFixed(6)}</span>
-                </div>
               </div>
             </div>
           </motion.div>
@@ -1305,7 +1331,7 @@ export default function AddProperty() {
                     handleNestedChange("legalDetails", "ownershipType", value)
                   }
                 >
-                  <SelectTrigger className="h-11">
+                  <SelectTrigger style={{ height: "2.75rem" }} className="h-11">
                     <SelectValue placeholder="Select ownership type" />
                   </SelectTrigger>
                   <SelectContent>

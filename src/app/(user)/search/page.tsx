@@ -35,6 +35,7 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { Skeleton } from "~/components/ui/skeleton";
 
 const MAHARASHTRA_CITIES = [
   { id: "all", name: "All Cities" },
@@ -248,6 +249,38 @@ const PropertyCard = ({
         </CardContent>
       </Card>
     </Link>
+  );
+};
+
+const PropertyCardSkeleton = () => {
+  return (
+    <Card className="relative gap-4 overflow-hidden p-0">
+      <Skeleton className="aspect-[16/9] w-full" />
+      <CardHeader className="pb-2">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="mt-2 h-4 w-full" />
+      </CardHeader>
+      <CardContent className="pt-0 pb-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <Skeleton className="h-3 w-10" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+          <div className="space-y-1">
+            <Skeleton className="h-3 w-10" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+          <div className="space-y-1">
+            <Skeleton className="h-3 w-10" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+          <div className="space-y-1">
+            <Skeleton className="h-3 w-10" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -599,8 +632,12 @@ export default function SearchProperties() {
         <ScrollArea className="scrollbar mb-6 h-full md:h-auto">
           <div className="space-y-6">
             {isLoading ? (
-              <div className="mt-40 flex items-center justify-center">
-                <Loader2 className="text-primary h-8 w-8 animate-spin" />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {Array(6)
+                  .fill(0)
+                  .map((_, i) => (
+                    <PropertyCardSkeleton key={i} />
+                  ))}
               </div>
             ) : filteredProperties.length === 0 ? (
               <div className="bg-muted/20 mt-10 flex flex-col items-center justify-center rounded-lg py-16 text-center">

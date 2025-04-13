@@ -25,6 +25,7 @@ import {
   ArrowRight,
   Plus,
 } from "lucide-react";
+import { trim } from "~/lib/utils";
 
 const properties = [
   {
@@ -115,6 +116,12 @@ const PropertyCard = ({ property }: { property: (typeof properties)[0] }) => {
     <Link href={`/properties/${property.id}`}>
       <Card className="hover:border-primary/30 relative overflow-hidden p-0 transition-all hover:shadow-md">
         <div className="absolute top-4 right-4">
+          <Badge
+            className="mr-2"
+            variant={property.status === "ACTIVE" ? "default" : "secondary"}
+          >
+            {property.status}
+          </Badge>
           {property.verified && (
             <Badge
               variant="outline"
@@ -135,15 +142,10 @@ const PropertyCard = ({ property }: { property: (typeof properties)[0] }) => {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{property.title}</CardTitle>
-            <Badge
-              variant={property.status === "ACTIVE" ? "default" : "secondary"}
-            >
-              {property.status}
-            </Badge>
           </div>
-          <CardDescription className="flex items-center gap-1">
+          <CardDescription className="flex items-center gap-1 text-sm">
             <MapPin className="h-3.5 w-3.5" />
-            {property.address}
+            {trim(property.address, 42)}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0 pb-6">
@@ -164,9 +166,7 @@ const PropertyCard = ({ property }: { property: (typeof properties)[0] }) => {
             </div>
             <div className="space-y-1">
               <p className="text-muted-foreground text-xs">Location</p>
-              <p className="font-medium">
-                {property.city}, {property.district}
-              </p>
+              <p className="font-medium">{property.city}</p>
             </div>
           </div>
         </CardContent>

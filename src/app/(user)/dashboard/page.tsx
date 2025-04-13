@@ -34,12 +34,13 @@ import {
 } from "lucide-react";
 
 const registrySteps = [
-  { phase: "KYC_VERIFICATION", status: "COMPLETED", date: "2024-03-01" },
+  { phase: "ADDED_PROPERTY", status: "COMPLETED", date: "2024-03-01" },
   { phase: "DOCUMENT_UPLOAD", status: "COMPLETED", date: "2024-03-05" },
   { phase: "DOCUMENT_VERIFICATION", status: "IN_PROGRESS", date: "2024-03-10" },
+  { phase: "PROPERTY_LISTED", status: "PENDING", date: null },
   { phase: "STAMP_DUTY_PAYMENT", status: "PENDING", date: null },
   { phase: "AGREEMENT_SIGNING", status: "PENDING", date: null },
-  { phase: "MUTATION_REGISTRATION", status: "PENDING", date: null },
+  { phase: "NFT_HANDOVER", status: "PENDING", date: null },
 ];
 
 const propertyDeal = {
