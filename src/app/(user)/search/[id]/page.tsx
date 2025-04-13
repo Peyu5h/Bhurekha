@@ -38,6 +38,8 @@ import {
   Handshake,
   CreditCard,
   UserCheck,
+  AlertCircle,
+  Info,
 } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -57,6 +59,35 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Input } from "~/components/ui/input";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { Label } from "~/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "~/lib/utils";
+import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "~/components/ui/calendar";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const propertyDetails = {
   id: "PRJ-2024-001",
@@ -216,6 +247,18 @@ const propertyDetails = {
   },
 };
 
+const ScheduleFormSchema = z.object({
+  date: z.date({
+    required_error: "Please select a date for the appointment.",
+  }),
+  time: z.string({
+    required_error: "Please select a time slot.",
+  }),
+  location: z.string({
+    required_error: "Please select a registration office.",
+  }),
+});
+
 export default function PropertyDetailsForBuyer({
   params,
 }: {
@@ -223,22 +266,35 @@ export default function PropertyDetailsForBuyer({
 }) {
   const { user } = useWalletAuth();
   const router = useRouter();
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [messageText, setMessageText] = useState("");
-  const [selectedDocument, setSelectedDocument] = useState<any>(null);
-  const [isGeneratingDeed, setIsGeneratingDeed] = useState(false);
-  const [hasApprovedDeed, setHasApprovedDeed] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [demoSellerAccepted, setDemoSellerAccepted] = useState(
-    propertyDetails.sellerAccepted,
-  );
-  const [demoAgreementStatus, setDemoAgreementStatus] = useState(
+  const [activeTab, setActiveTab] = React.useState("details");
+  const [currentPhotoIndex, setCurrentPhotoIndex] = React.useState(0);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isGeneratingDeed, setIsGeneratingDeed] = React.useState(false);
+  const [hasApprovedDeed, setHasApprovedDeed] = React.useState(false);
+  const [demoAgreementStatus, setDemoAgreementStatus] = React.useState(
     propertyDetails.agreementStatus,
   );
-  const [demoPaymentStatus, setDemoPaymentStatus] = useState(
+  const [demoSellerAccepted, setDemoSellerAccepted] = React.useState(false);
+  const [demoPaymentStatus, setDemoPaymentStatus] = React.useState(
     propertyDetails.agreementInfo.paymentStatus,
   );
-  const [showDemoControls, setShowDemoControls] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
+  const [showSchedulingModal, setShowSchedulingModal] = React.useState(false);
+  const [scheduledDate, setScheduledDate] = React.useState("");
+  const [scheduledTime, setScheduledTime] = React.useState("");
+  const [isScheduled, setIsScheduled] = React.useState(false);
+  const [showDemoControls, setShowDemoControls] = React.useState(true);
+  const [messageText, setMessageText] = React.useState("");
+
+  const scheduleForm = useForm<z.infer<typeof ScheduleFormSchema>>({
+    resolver: zodResolver(ScheduleFormSchema),
+    defaultValues: {
+      location: "central",
+      date: new Date(new Date().setDate(new Date().getDate() + 3)),
+      time: "11:00 AM",
+    },
+  });
 
   const nextPhoto = () => {
     setCurrentPhotoIndex((prev) =>
@@ -283,11 +339,29 @@ export default function PropertyDetailsForBuyer({
     setDemoAgreementStatus("COMPLETED");
     propertyDetails.agreementInfo.registrationDate = new Date(
       new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
-    ).toISOString();
+    ).toISOString() as any;
     propertyDetails.agreementInfo.registrationVenue =
-      "Sub-Registrar Office, Mumbai Central";
+      "Sub-Registrar Office, Mumbai Central" as any;
     toast.success("Payment Successful");
   };
+
+  const handleScheduleAppointment = (
+    data: z.infer<typeof ScheduleFormSchema>,
+  ) => {
+    setIsScheduled(true);
+    setShowSchedulingModal(false);
+    toast.success("Appointment scheduled successfully!");
+  };
+
+  const propertyValue = parseInt(propertyDetails.price.replace(/[₹,]/g, ""));
+  const stampDutyPercentage = 5;
+  const registrationFee = Math.min(propertyValue * 0.01, 30000);
+
+  const stampDutyAmount = propertyValue * (stampDutyPercentage / 100);
+  const formattedStampDuty = `₹${stampDutyAmount.toLocaleString()}`;
+  const formattedRegistrationFee = `₹${registrationFee.toLocaleString()}`;
+  const totalFees = stampDutyAmount + registrationFee;
+  const formattedTotalFees = `₹${totalFees.toLocaleString()}`;
 
   const renderAgreementContent = () => {
     if (demoAgreementStatus === "PENDING" && !demoSellerAccepted) {
@@ -325,15 +399,6 @@ export default function PropertyDetailsForBuyer({
               </Button>
             </div>
           )}
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground mt-4 text-xs"
-            onClick={() => setShowDemoControls(!showDemoControls)}
-          >
-            {showDemoControls ? "Hide Demo Controls" : "Show Demo Controls"}
-          </Button>
         </div>
       );
     }
@@ -371,18 +436,8 @@ export default function PropertyDetailsForBuyer({
       );
     }
 
-    const propertyValue = parseInt(propertyDetails.price.replace(/[₹,]/g, ""));
-    const stampDutyPercentage = 5;
-    const registrationFee = Math.min(propertyValue * 0.01, 30000);
-
-    const stampDutyAmount = propertyValue * (stampDutyPercentage / 100);
-    const formattedStampDuty = `₹${stampDutyAmount.toLocaleString()}`;
-    const formattedRegistrationFee = `₹${registrationFee.toLocaleString()}`;
-    const totalFees = stampDutyAmount + registrationFee;
-    const formattedTotalFees = `₹${totalFees.toLocaleString()}`;
-
     return (
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col space-y-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Badge
@@ -404,56 +459,6 @@ export default function PropertyDetailsForBuyer({
             <FileText className="h-4 w-4" />
             Download PDF
           </Button>
-        </div>
-
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Seller Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center">
-                <Avatar className="mr-3 h-10 w-10">
-                  <AvatarFallback>
-                    {propertyDetails.sellerInfo.name[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">
-                    {propertyDetails.sellerInfo.name}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {propertyDetails.sellerInfo.contactNumber}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {propertyDetails.sellerInfo.email}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Buyer Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center">
-                <Avatar className="mr-3 h-10 w-10">
-                  <AvatarFallback>B</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">You (Buyer)</p>
-                  <p className="text-muted-foreground text-xs">
-                    +91 9876543210
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    buyer@example.com
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <Card className="mb-6 flex-1">
@@ -546,7 +551,7 @@ export default function PropertyDetailsForBuyer({
                   </li>
 
                   <li>
-                    The SELLER shall pay the applicable stamp duty amount of{" "}
+                    The BUYER shall pay the applicable stamp duty amount of{" "}
                     {formattedStampDuty} and registration fees of{" "}
                     {formattedRegistrationFee} as per the Government of
                     Maharashtra regulations.
@@ -582,48 +587,43 @@ export default function PropertyDetailsForBuyer({
           </CardContent>
         </Card>
 
-        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        {!hasApprovedDeed && demoAgreementStatus === "GENERATED" && (
+          <div className="flex justify-center py-4">
+            <Button onClick={approveDeed} className="gap-1">
+              <CheckCircle2 className="h-4 w-4" />
+              Approve Deed
+            </Button>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Registration Details</CardTitle>
             </CardHeader>
             <CardContent>
-              {demoAgreementStatus === "COMPLETED" ? (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="text-muted-foreground h-4 w-4" />
-                    <div>
-                      <p className="text-muted-foreground text-xs">
-                        Date & Time
-                      </p>
-                      <p className="font-medium">
-                        {propertyDetails.agreementInfo.registrationDate
-                          ? new Date(
-                              propertyDetails.agreementInfo.registrationDate,
-                            ).toLocaleString()
-                          : "To be scheduled"}
-                      </p>
-                    </div>
+              <div className="flex flex-col gap-2">
+                {demoAgreementStatus === "COMPLETED" ? (
+                  <div className="flex flex-col items-center justify-center py-3">
+                    <Button
+                      onClick={() => setShowSchedulingModal(true)}
+                      className="mb-2 gap-1"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      Schedule Appointment
+                    </Button>
+                    <p className="text-muted-foreground text-center text-xs">
+                      Schedule an appointment with the Sub-Registrar
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="text-muted-foreground h-4 w-4" />
-                    <div>
-                      <p className="text-muted-foreground text-xs">Venue</p>
-                      <p className="font-medium">
-                        {propertyDetails.agreementInfo.registrationVenue ||
-                          "To be confirmed"}
-                      </p>
-                    </div>
+                ) : (
+                  <div className="py-2 text-center">
+                    <p className="text-muted-foreground text-sm">
+                      Registration details will be available after payment
+                    </p>
                   </div>
-                </div>
-              ) : (
-                <div className="py-2 text-center">
-                  <p className="text-muted-foreground text-sm">
-                    Registration details will be available after seller pays the
-                    eStamp duty
-                  </p>
-                </div>
-              )}
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -660,92 +660,112 @@ export default function PropertyDetailsForBuyer({
                   {demoPaymentStatus === "PENDING" ? (
                     <div className="flex items-center gap-1 text-amber-500">
                       <Clock className="h-4 w-4" />
-                      <span className="text-xs">
-                        Waiting for Seller Payment
-                      </span>
+                      <span className="text-xs">Pending Payment</span>
                     </div>
                   ) : (
-                    <Badge variant="default">Paid by Seller</Badge>
+                    <Badge variant="default">Paid</Badge>
                   )}
                 </div>
               </div>
             </CardContent>
+            {demoPaymentStatus === "PENDING" && (
+              <CardFooter>
+                <Button
+                  onClick={makePayment}
+                  disabled={
+                    !hasApprovedDeed ||
+                    demoAgreementStatus !== "SELLER_APPROVED"
+                  }
+                  className="gap-1"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Pay Stamp Duty & Fees
+                </Button>
+              </CardFooter>
+            )}
           </Card>
         </div>
 
-        <div className="flex items-center justify-between">
-          {!hasApprovedDeed && demoAgreementStatus === "GENERATED" && (
-            <Button onClick={approveDeed} className="gap-1">
-              <CheckCircle2 className="h-4 w-4" />
-              Approve Deed
-            </Button>
-          )}
-
-          {hasApprovedDeed && demoAgreementStatus !== "COMPLETED" && (
-            <div className="flex items-center gap-2">
-              <Lock className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-green-500">
-                You have approved this deed
-              </span>
-            </div>
-          )}
-
-          {demoAgreementStatus === "COMPLETED" && (
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-green-500">
-                This agreement is complete
-              </span>
-            </div>
-          )}
-
-          <Button variant="outline" className="gap-1">
-            <FileCheck className="h-4 w-4" />
-            Verify Deed
-          </Button>
+        <div className="flex items-center justify-between py-6">
+          {/* <Button
+            onClick={approveDeed}
+            disabled={hasApprovedDeed || demoAgreementStatus !== "GENERATED"}
+            className="gap-1"
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            Approve Deed
+          </Button> */}
         </div>
 
-        {showDemoControls &&
-          (demoAgreementStatus === "BUYER_APPROVED" ||
-            demoAgreementStatus === "SELLER_APPROVED") && (
-            <div className="mt-6 border-t pt-4">
-              <p className="text-muted-foreground mb-2 text-xs">
-                Demo Controls (Only for Testing)
-              </p>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => {
-                  if (demoAgreementStatus === "BUYER_APPROVED") {
+        {isScheduled && (
+          <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-4">
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
+            <span className="text-sm font-medium text-green-700">
+              Agreement complete, appointment scheduled
+            </span>
+          </div>
+        )}
+
+        {showDemoControls && (
+          <div className="mt-6 border-t pt-4">
+            <p className="text-muted-foreground mb-2 text-xs">
+              Demo Controls (Only for Testing)
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {demoAgreementStatus === "PENDING" && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={generateSalesDeed}
+                  disabled={isGeneratingDeed}
+                  className="gap-1"
+                >
+                  <FileSignature className="h-4 w-4" />
+                  {isGeneratingDeed ? "Generating..." : "Generate Sales Deed"}
+                </Button>
+              )}
+
+              {demoAgreementStatus === "GENERATED" && !hasApprovedDeed && (
+                <Button
+                  onClick={approveDeed}
+                  variant="destructive"
+                  size="sm"
+                  className="gap-1"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Buyer Approve Deed
+                </Button>
+              )}
+
+              {hasApprovedDeed && demoAgreementStatus === "BUYER_APPROVED" && (
+                <Button
+                  onClick={() => {
                     setDemoAgreementStatus("SELLER_APPROVED");
-                    toast.success("Seller Approved");
-                  } else if (demoAgreementStatus === "SELLER_APPROVED") {
-                    setDemoPaymentStatus("COMPLETED");
-                    setDemoAgreementStatus("COMPLETED");
-                    propertyDetails.agreementInfo.registrationDate = new Date(
-                      new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
-                    ).toISOString();
-                    propertyDetails.agreementInfo.registrationVenue =
-                      "Sub-Registrar Office, Mumbai Central";
-                    toast.success("Seller Paid eStamp Duty");
-                  }
-                }}
-                className="gap-1"
-              >
-                {demoAgreementStatus === "BUYER_APPROVED" ? (
-                  <>
-                    <UserCheck className="h-4 w-4" />
-                    Simulate Seller Approval
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="h-4 w-4" />
-                    Simulate Seller eStamp Payment
-                  </>
-                )}
-              </Button>
+                    toast.success("Seller has approved the deed");
+                  }}
+                  variant="destructive"
+                  size="sm"
+                  className="gap-1"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Simulate Seller Approval
+                </Button>
+              )}
+
+              {demoAgreementStatus === "SELLER_APPROVED" && (
+                <Button
+                  onClick={makePayment}
+                  variant="destructive"
+                  size="sm"
+                  className="gap-1"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Make Payment
+                </Button>
+              )}
             </div>
-          )}
+          </div>
+        )}
       </div>
     );
   };
@@ -755,63 +775,240 @@ export default function PropertyDetailsForBuyer({
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Payment Details</DialogTitle>
+            <DialogTitle>Pay Stamp Duty & Registration Fees</DialogTitle>
             <DialogDescription>
-              Make a token payment to confirm the property purchase
+              As per Indian regulations, the buyer is responsible for paying
+              stamp duty and registration fees
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <label htmlFor="amount" className="text-sm font-medium">
-                Amount
-              </label>
-              <Input
-                id="amount"
-                value={propertyDetails.agreementInfo.tokenAmount}
-                disabled
-                className="col-span-3"
-              />
+          <div className="space-y-4 p-4">
+            <div className="rounded-md border p-4">
+              <h3 className="mb-2 font-medium">Payment Summary</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Stamp Duty (5% of property value)</span>
+                  <span className="font-medium">{formattedStampDuty}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Registration Fee (1%, capped at ₹30,000)</span>
+                  <span className="font-medium">
+                    {formattedRegistrationFee}
+                  </span>
+                </div>
+                <Separator className="my-2" />
+                <div className="flex justify-between font-medium">
+                  <span>Total Amount</span>
+                  <span>{formattedTotalFees}</span>
+                </div>
+              </div>
             </div>
 
-            <div className="grid gap-2">
-              <label htmlFor="cardNumber" className="text-sm font-medium">
-                Card Number
-              </label>
-              <Input
-                id="cardNumber"
-                placeholder="xxxx xxxx xxxx xxxx"
-                className="col-span-3"
-              />
+            <div className="space-y-2">
+              <Label htmlFor="payment-method">Payment Method</Label>
+              <Select defaultValue="upi">
+                <SelectTrigger id="payment-method">
+                  <SelectValue placeholder="Select payment method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="upi">UPI</SelectItem>
+                  <SelectItem value="netbanking">Net Banking</SelectItem>
+                  <SelectItem value="card">Credit/Debit Card</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <label htmlFor="expiryDate" className="text-sm font-medium">
-                  Expiry Date
-                </label>
-                <Input id="expiryDate" placeholder="MM/YY" />
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+              <div className="flex gap-2">
+                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
+                <div>
+                  <p className="text-sm font-medium text-amber-800">
+                    Important Information
+                  </p>
+                  <p className="mt-1 text-xs text-amber-700">
+                    After payment, you will need to schedule an appointment at
+                    the Sub-Registrar office for the property registration. Both
+                    buyer and seller must be present during the appointment with
+                    all original documents.
+                  </p>
+                </div>
               </div>
-              <div className="grid gap-2">
-                <label htmlFor="cvv" className="text-sm font-medium">
-                  CVV
-                </label>
-                <Input id="cvv" placeholder="xxx" />
-              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowPaymentModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={completeDemoPayment}>
+                Pay {formattedTotalFees}
+              </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setShowPaymentModal(false)}
+  const renderSchedulingModal = () => {
+    return (
+      <Dialog open={showSchedulingModal} onOpenChange={setShowSchedulingModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Schedule Registration Appointment</DialogTitle>
+            <DialogDescription>
+              Select a date and time for registration at the Sub-Registrar
+              office
+            </DialogDescription>
+          </DialogHeader>
+
+          <Form {...scheduleForm}>
+            <form
+              onSubmit={scheduleForm.handleSubmit(handleScheduleAppointment)}
+              className="space-y-4 py-4"
             >
-              Cancel
-            </Button>
-            <Button onClick={completeDemoPayment}>
-              Pay {propertyDetails.agreementInfo.tokenAmount}
-            </Button>
-          </div>
+              <FormField
+                control={scheduleForm.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Select Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="z-50 w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className="rounded-md border"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={scheduleForm.control}
+                name="time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Time</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select time slot" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="10:00 AM">10:00 AM</SelectItem>
+                        <SelectItem value="11:00 AM">11:00 AM</SelectItem>
+                        <SelectItem value="12:00 PM">12:00 PM</SelectItem>
+                        <SelectItem value="2:00 PM">2:00 PM</SelectItem>
+                        <SelectItem value="3:00 PM">3:00 PM</SelectItem>
+                        <SelectItem value="4:00 PM">4:00 PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={scheduleForm.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Registration Office</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select office location" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="central">
+                          Sub-Registrar Office, Mumbai Central
+                        </SelectItem>
+                        <SelectItem value="andheri">
+                          Sub-Registrar Office, Andheri
+                        </SelectItem>
+                        <SelectItem value="borivali">
+                          Sub-Registrar Office, Borivali
+                        </SelectItem>
+                        <SelectItem value="thane">
+                          Sub-Registrar Office, Thane
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+                <div className="flex gap-2">
+                  <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-800">
+                      Required Documents
+                    </p>
+                    <ul className="mt-1 list-disc space-y-1 pl-4 text-xs text-blue-700">
+                      <li>Original Sales Deed (will be provided at office)</li>
+                      <li>Proof of payment of Stamp Duty</li>
+                      <li>ID proofs of both buyer and seller</li>
+                      <li>Property title documents</li>
+                      <li>NOC from society/builder (if applicable)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowSchedulingModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!scheduleForm.formState.isValid}
+                >
+                  Schedule Appointment
+                </Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     );
@@ -819,6 +1016,8 @@ export default function PropertyDetailsForBuyer({
 
   return (
     <div className="flex h-auto flex-col p-4 md:max-h-screen md:overflow-hidden">
+      {renderPaymentModal()}
+      {renderSchedulingModal()}
       <ChatBot propertyData={propertyDetails} />
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -834,6 +1033,15 @@ export default function PropertyDetailsForBuyer({
             {propertyDetails.title}
           </h1>
         </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground text-xs"
+          onClick={() => setShowDemoControls(!showDemoControls)}
+        >
+          {showDemoControls ? "Hide Demo Controls" : "Show Demo Controls"}
+        </Button>
       </div>
 
       <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-3">
@@ -1230,7 +1438,6 @@ export default function PropertyDetailsForBuyer({
                   {renderAgreementContent()}
                 </CardContent>
               </Card>
-              {renderPaymentModal()}
             </TabsContent>
           </Tabs>
         </div>

@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`scrollbar ${inter.className}`} suppressHydrationWarning>
-        <ThemeProvider attribute={"class"} defaultTheme="light" enableSystem>
+        <ThemeProvider attribute={"class"} defaultTheme="dark" enableSystem>
           <ReactQueryProvider>
             <Web3Provider cookies={null}>
               <AuthLayout>{children}</AuthLayout>

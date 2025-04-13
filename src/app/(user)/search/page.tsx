@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -9,31 +8,19 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
 } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Slider } from "~/components/ui/slider";
-import { Badge } from "~/components/ui/badge";
 import {
   Home,
   MapPin,
   Building,
   Landmark,
-  IndianRupee,
   Filter,
   Search as SearchIcon,
-  Loader2,
-  Check,
-  X,
 } from "lucide-react";
 import { cn, trim } from "~/lib/utils";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "~/components/ui/accordion";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Skeleton } from "~/components/ui/skeleton";
 
@@ -628,7 +615,6 @@ export default function SearchProperties() {
           </div>
         </div>
 
-        {/* Results */}
         <ScrollArea className="scrollbar mb-6 h-full md:h-auto">
           <div className="space-y-6">
             {isLoading ? (
