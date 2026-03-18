@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   transpilePackages: ["react-map-gl", "mapbox-gl"],
   webpack: (config) => {
+    config.externals.push("pino-pretty", "encoding");
     config.resolve.fallback = {
       ...config.resolve.fallback,
       canvas: false,
