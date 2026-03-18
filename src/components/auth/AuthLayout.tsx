@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AuthWrapper from "~/components/auth/AuthWrapper";
-import { usePathname } from "next/navigation";
-import { AuthProvider } from "./AuthProvider";
+import { usePathname, useRouter } from "next/navigation";
 import { useWalletAuth } from "~/lib/hooks/useWalletAuth";
 
 interface ClientLayoutProps {
@@ -11,13 +9,68 @@ interface ClientLayoutProps {
 }
 
 export default function AuthLayout({ children }: ClientLayoutProps) {
-  const [mounted, setMounted] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useWalletAuth();
+  const [mounted, setMounted] = useState(false);
+  const [hasRouted, setHasRouted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const isAuthPage = pathname.startsWith("/auth");
+    const isAuthorityPage = pathname.startsWith("/authority");
+    const isAuthorityRoot = pathname === "/authority";
+
+    const redirectTo = (target: string) => {
+      if (pathname !== target) {
+        setHasRouted(true);
+        router.replace(target);
+      }
+    };
+
+    if (isLoading && !user) {
+      if (!isAuthPage && !hasRouted) {
+        redirectTo("/auth/login");
+      }
+      return;
+    }
+
+    if (!user) {
+      if (!isAuthPage && !hasRouted) {
+        redirectTo("/auth/login");
+      }
+      return;
+    }
+
+    if (user.role === "SUB_REGISTRAR") {
+      if (!isAuthorityPage) {
+        redirectTo("/authority/verifications");
+        return;
+      }
+      if (isAuthorityRoot) {
+        redirectTo("/authority/verifications");
+        return;
+      }
+    }
+
+    if (user.role === "USER" && isAuthorityPage) {
+      redirectTo("/dashboard");
+      return;
+    }
+
+    if (isAuthPage) {
+      redirectTo(
+        user.role === "SUB_REGISTRAR"
+          ? "/authority/verifications"
+          : "/dashboard",
+      );
+    }
+  }, [user, isLoading, pathname, router, mounted, hasRouted]);
 
   if (!mounted) {
     return (
@@ -27,20 +80,5 @@ export default function AuthLayout({ children }: ClientLayoutProps) {
     );
   }
 
-  // Special case for SUB_REGISTRAR users on authority pages - bypass auth checks
-  if (
-    !isLoading &&
-    user &&
-    user.role === "SUB_REGISTRAR" &&
-    pathname.startsWith("/authority") &&
-    pathname !== "/authority"
-  ) {
-    return <>{children}</>;
-  }
-
-  return (
-    <AuthProvider>
-      <AuthWrapper>{children}</AuthWrapper>
-    </AuthProvider>
-  );
+  return <>{children}</>;
 }
